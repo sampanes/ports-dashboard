@@ -1,0 +1,46 @@
+{
+  "_comment": "COPY ME to config.local.json (git-ignored) and edit. Everything here deep-merges ON TOP of config.default.json: dict entries override/add by key, list entries are added to the defaults, scalars replace. You only need the keys you want to change -- delete the rest. The values below are illustrative samples, not real services.",
+
+  "_dashboard_comment": "Change the port the dashboard serves on, and the friendly name it gives its own row.",
+  "dashboard": {
+    "port": 18790,
+    "self_name": "Ports dashboard"
+  },
+
+  "_port_labels_comment": "port number (as a string) -> friendly name shown on the card.",
+  "port_labels": {
+    "9999": "my custom service",
+    "7777": "home media box"
+  },
+
+  "_pinned_ports_comment": "Ports you always want surfaced in the focused list, even on a high/dynamic number.",
+  "pinned_ports": [9999, 7777],
+
+  "_user_facing_terms_comment": "Substrings that force a service into the focused list when matched in its name/service/image/title.",
+  "user_facing_terms": ["my-app"],
+
+  "_process_labels_comment": "process image name (lowercase .exe) -> what the app actually is. Fills the gap for services on dynamic ports.",
+  "process_labels": {
+    "myservice.exe": "My Service",
+    "vendor-agent.exe": "Some Vendor Agent"
+  },
+
+  "_process_label_prefixes_comment": "image-name prefix -> label, for families of executables.",
+  "process_label_prefixes": {
+    "myvendor-": "My Vendor Suite"
+  },
+
+  "_background_process_images_comment": "image names to push into the collapsed Background/System sections.",
+  "background_process_images": ["vendor-agent.exe", "telemetry.exe"],
+
+  "_diagnostics_comment": "Which health-check panels to render. 'tailscale' is a built-in generic check. Other names (like 'example' below, or your own custom checks) must be provided by a local plugin: copy local_dev_tools/diagnostics_local.example.py to local_dev_tools/diagnostics_local.py (git-ignored) and define them. A check only runs when its name is enabled here.",
+  "diagnostics": {
+    "tailscale": { "enabled": true, "service": "Tailscale" },
+    "example": { "enabled": false, "service": "Spooler", "port": 9100, "title": "Print Spooler" }
+  },
+
+  "_process_cleanup_comment": "Extra substrings the process-cleanup tool treats as 'AI/tool' processes worth surfacing.",
+  "process_cleanup": {
+    "ai_tool_terms": ["my-ai-tool"]
+  }
+}

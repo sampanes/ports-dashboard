@@ -1,0 +1,101 @@
+{
+  "_comment": "Public, shareable defaults. Loaded always. Put YOUR personal port nicknames, machine-specific process labels, and enabled diagnostics in config.local.json (git-ignored) -- it deep-merges on top of this. See config.local.example.json.",
+
+  "dashboard": {
+    "port": 18790,
+    "self_name": "Ports dashboard"
+  },
+
+  "port_labels": {
+    "20": "FTP-data", "21": "FTP", "22": "SSH", "23": "Telnet", "25": "SMTP",
+    "53": "DNS", "67": "DHCP server", "68": "DHCP client", "69": "TFTP", "80": "HTTP",
+    "88": "Kerberos", "110": "POP3", "111": "RPCbind", "119": "NNTP", "123": "NTP",
+    "135": "MS RPC (DCOM)", "137": "NetBIOS name", "138": "NetBIOS datagram",
+    "139": "NetBIOS session", "143": "IMAP", "161": "SNMP", "162": "SNMP trap",
+    "179": "BGP", "389": "LDAP", "443": "HTTPS", "445": "SMB", "465": "SMTPS",
+    "500": "IKE/IPsec", "514": "syslog", "515": "LPD/print", "548": "AFP",
+    "554": "RTSP", "587": "SMTP (submit)", "593": "MS RPC over HTTP",
+    "631": "IPP/print", "636": "LDAPS", "873": "rsync", "902": "VMware ESXi",
+    "989": "FTPS-data", "990": "FTPS", "993": "IMAPS", "995": "POP3S",
+    "1080": "SOCKS proxy", "1194": "OpenVPN", "1433": "MS SQL", "1521": "Oracle DB",
+    "1701": "L2TP", "1723": "PPTP", "1883": "MQTT", "1900": "SSDP/UPnP", "2049": "NFS",
+    "2179": "Hyper-V VMConnect", "2375": "Docker (plain)", "2376": "Docker (TLS)",
+    "2869": "UPnP host", "3000": "dev / Grafana", "3268": "LDAP global catalog",
+    "3306": "MySQL", "3389": "RDP", "3478": "STUN/TURN", "4000": "dev server",
+    "5000": "dev / UPnP", "5040": "Win Connect Now", "5060": "SIP", "5061": "SIP-TLS",
+    "5173": "Vite dev server", "5222": "XMPP", "5353": "mDNS", "5354": "mDNSResponder",
+    "5357": "WSDAPI (WS-Discovery)", "5432": "PostgreSQL", "5555": "ADB (Android)",
+    "5672": "AMQP/RabbitMQ", "5900": "VNC", "5938": "TeamViewer", "5939": "TeamViewer",
+    "5985": "WinRM (HTTP)", "5986": "WinRM (HTTPS)", "6379": "Redis",
+    "6443": "Kubernetes API", "6463": "Discord RPC",
+    "7680": "Win Delivery Optimization", "7860": "Gradio", "8000": "HTTP-alt / dev",
+    "8080": "HTTP-alt", "8086": "InfluxDB", "8096": "Jellyfin", "8123": "Home Assistant",
+    "8443": "HTTPS-alt", "8888": "Jupyter / HTTP-alt",
+    "9000": "HTTP-alt / Portainer", "9090": "Prometheus", "9100": "JetDirect/print",
+    "9200": "Elasticsearch", "9418": "git", "11211": "memcached", "11434": "Ollama",
+    "18790": "Ports dashboard", "25565": "Minecraft", "27000": "FlexLM license server",
+    "27015": "Source/Steam", "27017": "MongoDB", "32400": "Plex",
+    "47984": "Sunshine (HTTPS)", "47989": "Sunshine (HTTP)", "47990": "Sunshine (web UI)",
+    "48010": "Sunshine (RTSP)", "47998": "Sunshine (video UDP)",
+    "47999": "Sunshine (control UDP)", "48000": "Sunshine (audio UDP)",
+    "48002": "Sunshine (input UDP)", "62078": "iOS sync (lockdown)"
+  },
+
+  "system_ports": [
+    20, 21, 22, 23, 25, 53, 67, 68, 88, 110, 111, 119, 123, 135, 137, 138, 139,
+    143, 161, 162, 179, 389, 445, 465, 500, 514, 515, 548, 554, 587, 593, 631,
+    636, 873, 989, 990, 993, 995, 1701, 1723, 1900, 2049, 2179, 2869, 3268,
+    3389, 3478, 3702, 4500, 5004, 5005, 5040, 5060, 5061, 5353, 5354, 5355,
+    5357, 5985, 5986, 7680, 9100, 10243, 62078
+  ],
+
+  "pinned_ports": [
+    18790, 11434, 5432, 7860, 8000, 8080, 8888, 3000, 4000, 5000,
+    5173, 47984, 47989, 47990, 47998, 47999, 48000, 48002, 48010
+  ],
+
+  "user_facing_terms": [
+    "ports dashboard", "ollama", "sunshine",
+    "moonlight", "vite", "jupyter", "gradio", "postgres", "teamviewer", "plex",
+    "jellyfin", "home assistant"
+  ],
+
+  "process_labels": {
+    "sunshine.exe": "Sunshine (game-stream host)",
+    "tailscaled.exe": "Tailscale daemon",
+    "ollama.exe": "Ollama (local LLM)",
+    "postgres.exe": "PostgreSQL",
+    "node.exe": "Node.js",
+    "python.exe": "Python",
+    "code.exe": "VS Code",
+    "teamviewer_service.exe": "TeamViewer",
+    "mdnsresponder.exe": "Bonjour (mDNS)",
+    "wmpnetwk.exe": "WMP network sharing",
+    "system": "Windows kernel (SMB/NetBIOS)",
+    "lsass.exe": "Windows auth (LSASS)",
+    "services.exe": "Windows Service Control Mgr",
+    "wininit.exe": "Windows init",
+    "spoolsv.exe": "Print Spooler",
+    "dllhost.exe": "COM surrogate",
+    "dashost.exe": "Device Association host"
+  },
+
+  "process_label_prefixes": {
+    "servicehub": "VS ServiceHub (.NET)",
+    "svchost": "Windows service host"
+  },
+
+  "background_process_images": [
+    "code.exe",
+    "tailscaled.exe"
+  ],
+
+  "_diagnostics_comment": "Optional health-check panels. tailscale ships as a built-in, generic check (see local_dev_tools/diagnostics.py). Your own machine-specific checks live in a git-ignored plugin, local_dev_tools/diagnostics_local.py -- copy diagnostics_local.example.py to start one -- and are enabled from config.local.json.",
+  "diagnostics": {
+    "tailscale": { "enabled": true, "service": "Tailscale" }
+  },
+
+  "process_cleanup": {
+    "ai_tool_terms": ["claude-code", "codex", "gemini", "mcp"]
+  }
+}

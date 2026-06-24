@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Private machine-specific config and secrets -- never commit these.
+# Copy config.local.example.json -> config.local.json and edit.
+config.local.json
+*.local.json
+!config.local.example.json
+secrets.json
+*.secret.json
+.env
+
+# Private diagnostics plugin (machine-specific checks). The .example stays tracked.
+local_dev_tools/diagnostics_local.py

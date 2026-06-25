@@ -181,6 +181,12 @@ config, so the config and the plugin are decoupled:
 Checks degrade gracefully when the underlying app isn't installed, and if no
 check is enabled the Diagnostics section is hidden entirely.
 
+For a worked reference on building a less obvious check — listing the local
+**LLM coding-agent sessions** (Claude Code / Codex) that are running right now,
+with their human-readable titles — see
+[docs/llm-session-discovery.md](docs/llm-session-discovery.md). It's pure
+stdlib file reads and slots straight into a `diagnostics_local.py` plugin.
+
 ## Process Cleanup
 
 `find-js-processes.bat` launches an interactive process cleanup view. It filters

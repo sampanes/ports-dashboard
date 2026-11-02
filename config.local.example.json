@@ -1,10 +1,13 @@
 {
   "_comment": "COPY ME to config.local.json (git-ignored) and edit. Everything here deep-merges ON TOP of config.default.json: dict entries override/add by key, list entries are added to the defaults, scalars replace. You only need the keys you want to change -- delete the rest. The values below are illustrative samples, not real services.",
 
-  "_dashboard_comment": "Change the port the dashboard serves on, and the friendly name it gives its own row.",
+  "_dashboard_comment": "Change the port the dashboard serves on, and the friendly name it gives its own row. access.allow_logins lets extra Tailscale logins (another person's account) load the page; your own devices are already allowed.",
   "dashboard": {
     "port": 18790,
-    "self_name": "Ports dashboard"
+    "self_name": "Ports dashboard",
+    "access": {
+      "allow_logins": ["someone@example.com"]
+    }
   },
 
   "_port_labels_comment": "port number (as a string) -> friendly name shown on the card.",

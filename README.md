@@ -85,6 +85,29 @@ The page shows:
 | App UDP sockets | pinned app UDP ports or runtime-labeled app ports | App-specific |
 | Background/system TCP/UDP | Windows, helper agents, multicast, and ephemeral sockets | Usually not user-facing |
 
+### Who can load the page
+
+The page is a map of everything listening on this PC, so the dashboard checks
+who is asking before it answers:
+
+- **This PC** (`127.0.0.1`, `::1`) always gets the page.
+- **Tailnet devices** are looked up with `tailscale whois`. A device owned by the
+  same Tailscale user as this PC gets the page; anyone else gets `403`, and the
+  console prints a `[DENY]` line naming the address.
+- **Anything else** (a LAN address, an address Tailscale doesn't know, or
+  Tailscale not answering) gets `403`. The check fails closed.
+
+This matters when you share the PC with someone over Tailscale. Your tailnet
+policy is the real gate, and Tailscale's default allow-all rule also lets in
+people you've shared the machine with. The identity check is the backstop if a
+rule like that is ever left in place.
+
+To let another person's devices in, add their Tailscale login to
+`dashboard.access.allow_logins` in `config.local.json` (git-ignored, so the name
+never lands in the repo). Setting `dashboard.access.allow_own_devices` to
+`false` limits the page to this PC plus that list. Verdicts are cached per
+address for 60 seconds (15 seconds for a refusal).
+
 ### How services get their names
 
 Names come from, best to fuzziest:
@@ -216,7 +239,9 @@ local_dev_tools\
   diagnostics_local.example.py template for your own diagnostics plugin
   diagnostics_local.py         your private checks (git-ignored, not present until you add it)
   tailscale_self_ip.py         prints the tailnet IPv4 when this node is online
+  tailnet_access.py            who may load the page (loopback + own tailnet devices)
 
+tests\                    stdlib unit tests: python -m unittest
 ports_dashboard.py        compatibility entry point
 find-js-processes.py      process cleanup entry point
 ```
@@ -227,6 +252,8 @@ find-js-processes.py      process cleanup entry point
   `dashboard.port` or `--port`.
 - The start script always binds `127.0.0.1`, then also binds the current
   Tailscale IP when Tailscale reports this PC online.
-- To expose the dashboard to the whole LAN manually, run:
-  `python ports_dashboard.py --host 0.0.0.0 --port 18790`.
+- Binding `0.0.0.0` (`python ports_dashboard.py --host 0.0.0.0 --port 18790`)
+  makes the port reachable on the LAN, but LAN clients still get `403`: only
+  this PC and verified tailnet devices are answered (see
+  [Who can load the page](#who-can-load-the-page)).
 - No `pip install` is required.

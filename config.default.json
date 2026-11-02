@@ -3,7 +3,12 @@
 
   "dashboard": {
     "port": 18790,
-    "self_name": "Ports dashboard"
+    "self_name": "Ports dashboard",
+    "_access_comment": "Who may load the page besides this PC. allow_own_devices admits tailnet devices owned by the same Tailscale user as this PC. Add extra Tailscale login names to allow_logins in config.local.json, never here.",
+    "access": {
+      "allow_own_devices": true,
+      "allow_logins": []
+    }
   },
 
   "port_labels": {

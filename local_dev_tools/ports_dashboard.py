@@ -58,6 +58,11 @@ try:
 except ImportError:
     from sysutil import run_result
 
+try:
+    from local_dev_tools.tailnet_access import TailnetAccess
+except ImportError:
+    from tailnet_access import TailnetAccess
+
 # Optional, pluggable diagnostics. The dashboard runs fine without it.
 try:
     from local_dev_tools import diagnostics
@@ -109,6 +114,7 @@ BACKGROUND_PROCESS_IMAGES = {str(x).lower() for x in (_CONFIG.get("background_pr
 PROC_LABELS = _lower_keyed(_CONFIG.get("process_labels"))      # image name -> what it IS
 PROC_LABEL_PREFIXES = _lower_keyed(_CONFIG.get("process_label_prefixes"))
 DIAGNOSTICS_CONFIG = _CONFIG.get("diagnostics") or {}
+ACCESS = TailnetAccess.from_config(_CONFIG)
 
 
 def proc_label(image):
@@ -1211,7 +1217,20 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(payload)
 
+    def _refuse(self, reason):
+        print(f"[DENY] {self.client_address[0]}: {reason}", flush=True)
+        payload = b"403: this dashboard only answers this PC and its owner's tailnet devices.\n"
+        self.send_response(403)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.end_headers()
+        self.wfile.write(payload)
+
     def do_GET(self):
+        allowed, reason = ACCESS.check(self.client_address[0])
+        if not allowed:
+            self._refuse(reason)
+            return
         if self.path in ("/favicon.svg", "/favicon.ico"):
             self._send(FAVICON, "image/svg+xml")
             return

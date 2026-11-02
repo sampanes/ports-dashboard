@@ -27,9 +27,10 @@ desktop session (launch via start-ports-dashboard.bat). As a background service,
 
 UI: stacked cards (no horizontal scroll on a phone). Each blue port link opens
 that service through the same host you used to view the dashboard; loopback-only
-services are clickable when the dashboard is opened on this PC. Auto-refreshes
-every 15s via a fetch that preserves your scroll position and which sections
-you've expanded.
+services are clickable when the dashboard is opened on this PC. No auto-refresh
+(each refresh runs `tasklist /v`); the Refresh button re-fetches the page in
+place, keeping your scroll position and which sections you've expanded, and
+says so next to "updated" if the fetch fails.
 
 Pure standard library on purpose: no pip install, nothing to vet, runs as-is.
 """
@@ -1063,15 +1064,26 @@ PAGE = """<!doctype html>
     if (s < 60) return s + 's ago';
     return Math.floor(s / 60) + 'm ' + (s % 60) + 's ago';
   }}
-  function tickAge() {{ ageEl.textContent = fmtAge(Date.now() - lastFetch); }}
+  var failure = '';
+  function tickAge() {{
+    ageEl.textContent = fmtAge(Date.now() - lastFetch) + (failure ? ' · last refresh failed: ' + failure : '');
+    ageEl.style.color = failure ? '#e5534b' : '';
+  }}
   function refresh() {{
     btn.disabled = true; btn.textContent = 'Refreshing';
-    fetch(location.href, {{cache:'no-store'}}).then(function(r){{return r.text();}}).then(function(t){{
+    fetch(location.href, {{cache:'no-store'}}).then(function(r){{
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }}).then(function(t){{
       var doc = new DOMParser().parseFromString(t, 'text/html');
+      var fresh = doc.getElementById('content');
+      if (!fresh) throw new Error('unexpected response');
       var y = window.scrollY;
-      document.getElementById('content').innerHTML = doc.getElementById('content').innerHTML;
-      lastFetch = Date.now(); track(); applyFilter(); window.scrollTo(0, y);
-    }}).catch(function(){{}}).then(function(){{
+      document.getElementById('content').innerHTML = fresh.innerHTML;
+      lastFetch = Date.now(); failure = ''; track(); applyFilter(); window.scrollTo(0, y);
+    }}).catch(function(e){{
+      failure = (e && e.message) || 'network error';
+    }}).then(function(){{
       btn.disabled = false; btn.textContent = 'Refresh'; tickAge();
     }});
   }}
@@ -1079,6 +1091,21 @@ PAGE = """<!doctype html>
   track(); applyFilter(); tickAge(); setInterval(tickAge, 1000);
 </script>
 </body></html>"""
+
+
+def host_from_header(host_hdr):
+    """The host part of an HTTP Host header, without the port or IPv6 brackets.
+
+    Handles "name", "name:port", "1.2.3.4:port", "[v6]" and "[v6]:port". Falls
+    back to 127.0.0.1 when the header is missing or empty.
+    """
+    host = (host_hdr or "").strip()
+    if host.startswith("["):
+        end = host.find("]")
+        host = host[1:end] if end > 0 else host[1:]
+    elif host.count(":") == 1:
+        host = host.split(":", 1)[0]
+    return host or "127.0.0.1"
 
 
 def is_loopback_client(client_host):
@@ -1089,7 +1116,7 @@ def is_loopback_client(client_host):
 def render_rows(rows, client_host):
     if not rows:
         return '<div class="empty">none</div>'
-    host_for_url = f"[{client_host}]" if ":" in client_host else client_host
+    host_for_url = html.escape(f"[{client_host}]" if ":" in client_host else client_host, quote=True)
     local_browser = is_loopback_client(client_host)
     out = []
     for r in sorted(rows, key=group_sort_key):
@@ -1237,10 +1264,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path not in ("/", "/index.html"):
             self.send_error(404)
             return
-        host_hdr = self.headers.get("Host", "") or self.bind_label
-        client_host = host_hdr.rsplit(":", 1)[0].strip("[]") if host_hdr else "127.0.0.1"
-        if not client_host:
-            client_host = "127.0.0.1"
+        client_host = host_from_header(self.headers.get("Host", ""))
         payload = render_page(self.bind_label, client_host).encode("utf-8")
         self._send(payload, "text/html; charset=utf-8")
 
